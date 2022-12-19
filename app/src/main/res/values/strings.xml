@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MyMusicAppPlayer</string>
+    <string name="title_MainPage">Trang chủ</string>
+    <string name="title_Album">Album</string>
+    <string name="title_Folder">Thư mục</string>
+    <string name="title_Setting">Cài đặt</string>
+    <string name="title_MainPageTitle">Trang chủ</string>
+    <string name="title_AlbumTitle">Album</string>
+    <string name="title_FolderTitle">Thư mục</string>
+    <string name="title_SettingTitle">Cài đặt</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

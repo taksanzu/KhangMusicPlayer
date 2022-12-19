@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_mainpage"
+        android:icon="@drawable/home"
+        android:title="@string/title_MainPage" />
+
+    <item
+        android:id="@+id/navigation_album"
+        android:icon="@drawable/album"
+        android:title="@string/title_Album" />
+
+    <item
+        android:id="@+id/navigation_folder"
+        android:icon="@drawable/folder"
+        android:title="@string/title_Folder" />
+
+    <item
+        android:id="@+id/navigation_setting"
+        android:icon="@drawable/setting"
+        android:title="@string/title_Setting" />
+
+</menu>
