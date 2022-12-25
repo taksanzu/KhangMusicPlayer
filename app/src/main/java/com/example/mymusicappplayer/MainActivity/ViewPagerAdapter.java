@@ -1,9 +1,14 @@
-package com.example.mymusicappplayer;
+package com.example.mymusicappplayer.MainActivity;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import com.example.mymusicappplayer.AlbumFragment;
+import com.example.mymusicappplayer.FolderActivity.FolderFragment;
+import com.example.mymusicappplayer.HomeFragment;
+import com.example.mymusicappplayer.SettingFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {

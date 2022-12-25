@@ -1,14 +1,10 @@
-package com.example.mymusicappplayer;
+package com.example.mymusicappplayer.FolderActivity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +13,9 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.mymusicappplayer.R;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer;
+package com.example.mymusicappplayer.FolderActivity;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer;
+package com.example.mymusicappplayer.MainActivity;
 
 import android.content.Context;
 import android.view.GestureDetector;

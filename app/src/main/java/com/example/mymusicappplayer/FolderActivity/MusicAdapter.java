@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer;
+package com.example.mymusicappplayer.FolderActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,6 +12,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mymusicappplayer.MusicplayerActivity.MusicPlayerActivity;
+import com.example.mymusicappplayer.MusicplayerActivity.MyMediaPlayer;
+import com.example.mymusicappplayer.R;
 
 import java.util.ArrayList;
 
@@ -48,7 +52,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
                 //navigate to another acitivty
                 MyMediaPlayer.getInstance().reset();
                 MyMediaPlayer.currentIndex = position;
-                Intent intent = new Intent(context,MusicPlayerActivity.class);
+                Intent intent = new Intent(context, MusicPlayerActivity.class);
                 intent.putExtra("LIST",songsList);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);

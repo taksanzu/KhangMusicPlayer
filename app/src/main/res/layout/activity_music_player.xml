@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorAccent"
     android:id="@+id/musicPlayer"
-    tools:context=".MusicPlayerActivity">
+    tools:context=".MusicplayerActivity.MusicPlayerActivity">
 
     <RelativeLayout
         android:layout_width="wrap_content"
