@@ -3,6 +3,7 @@ package com.example.mymusicappplayer.MusicplayerActivity;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_NEXT;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_PLAY;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_PREV;
+import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_1;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_2;
 
 import android.app.Notification;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -29,7 +29,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
-import com.example.mymusicappplayer.FolderActivity.MusicModel;
+import com.bumptech.glide.Glide;
+import com.example.mymusicappplayer.FolderActivity.MusicModelFolder;
+import com.example.mymusicappplayer.FolderActivity.MusicServiceFolder;
+import com.example.mymusicappplayer.FolderActivity.NotificationReciverFolder;
+import com.example.mymusicappplayer.HomeActivity.MusicModelHome;
+import com.example.mymusicappplayer.HomeActivity.MusicServiceHome;
+import com.example.mymusicappplayer.HomeActivity.NotificationReciverHome;
 import com.example.mymusicappplayer.R;
 
 import java.io.IOException;
@@ -43,13 +49,16 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
     SeekBar seekBar;
     ImageView pausePlay,nextBtn,previousBtn, repeatBtn, backBtn, backToPlaylist;
     CircleImageView circleImageView;
-    ArrayList<MusicModel> songsList;
-    MusicModel currentSong;
+    ArrayList<MusicModelFolder> songsListFolder;
+    MusicModelFolder currentSongFolder;
+    ArrayList<MusicModelHome> songListHome;
+    MusicModelHome currentSongHome;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
     int x = 0, y = 0;//y = 0: repeatDisable, y = 1: repeat
-    MusicService musicService;
-    boolean isPlaying = false;
+    MusicServiceFolder musicServiceFolder;
+    MusicServiceHome musicServiceHome;
     MediaSessionCompat mediaSession;
+    int z = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,39 +75,74 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         backToPlaylist = findViewById(R.id.backToPlaylist);
         circleImageView = findViewById(R.id.music_icon_big);
         mediaSession = new MediaSessionCompat(this, "PlayerAudio");
+        mediaPlayer.reset();
         titleTv.setSelected(true);
-        songsList = (ArrayList<MusicModel>) getIntent().getSerializableExtra("LIST");
-
-        setResourcesWithMusic();
-        if (mediaPlayer.isPlaying()){
-            startAnimationRotate();
-            isPlaying = true;
-            Log.e( "Playing",isPlaying + "" );
-            showNotification(R.drawable.ic_baseline_pause_24);
-        } else {
-            circleImageView.clearAnimation();
-            isPlaying = false;
-            showNotification(R.drawable.ic_baseline_play_arrow_24);
-        }
-        MusicPlayerActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(mediaPlayer!=null){
-                    seekBar.setProgress(mediaPlayer.getCurrentPosition());
-                    currentTimeTv.setText(convertToMMSS(mediaPlayer.getCurrentPosition()+""));
-                    if(mediaPlayer.isPlaying()){
-                        pausePlay.setImageResource(R.drawable.ic_baseline_pause_24);
-                        showNotification(R.drawable.ic_baseline_pause_24);
-                    }else{
-                        pausePlay.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-                        showNotification(R.drawable.ic_baseline_play_arrow_24);
-                    }
-
+        String text = getIntent().getStringExtra("Class");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        switch (text){
+            case "Folder":
+                z = 1;
+                notificationManager.cancel(0);
+                songsListFolder = (ArrayList<MusicModelFolder>) getIntent().getSerializableExtra("LIST");
+                setResourcesWithMusicFolder();
+                if (mediaPlayer.isPlaying()){
+                    startAnimationRotate();
+                    showNotificationFolder(R.drawable.ic_baseline_pause_24);
+                } else {
+                    circleImageView.clearAnimation();
+                    showNotificationFolder(R.drawable.ic_baseline_play_arrow_24);
                 }
-                new Handler().postDelayed(this,100);
-            }
-        });
+                MusicPlayerActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mediaPlayer!=null){
+                            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                            currentTimeTv.setText(convertToMMSS(mediaPlayer.getCurrentPosition()+""));
+                            if(mediaPlayer.isPlaying()){
+                                pausePlay.setImageResource(R.drawable.ic_baseline_pause_24);
+                            }else{
+                                pausePlay.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                            }
 
+                        }
+                        new Handler().postDelayed(this,100);
+                    }
+                });
+                Intent intent = new Intent(this, MusicServiceFolder.class);
+                bindService(intent,this,BIND_AUTO_CREATE);
+                break;
+            case "Home":
+                z = 2;
+                songListHome = (ArrayList<MusicModelHome>) getIntent().getSerializableExtra("LISTHOME");
+                setResourcesWithMusicHome();
+                if (mediaPlayer.isPlaying()){
+                    startAnimationRotate();
+                    showNotificationHome(R.drawable.ic_baseline_pause_24);
+                } else {
+                    circleImageView.clearAnimation();
+                    showNotificationHome(R.drawable.ic_baseline_play_arrow_24);
+                }
+                MusicPlayerActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mediaPlayer!=null){
+                            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                            currentTimeTv.setText(convertToMMSS(mediaPlayer.getCurrentPosition()+""));
+                            if(mediaPlayer.isPlaying()){
+                                pausePlay.setImageResource(R.drawable.ic_baseline_pause_24);
+                            }else{
+                                pausePlay.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                            }
+
+                        }
+                        new Handler().postDelayed(this,100);
+                    }
+                });
+                Intent intent1 = new Intent(this, MusicServiceHome.class);
+                bindService(intent1,this,BIND_AUTO_CREATE);
+                break;
+
+        }
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -120,42 +164,72 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if (mediaPlayer.isLooping()){
+                switch (text){
+                    case "Folder":
+                        if (mediaPlayer.isLooping()){
 
-                }else {
-                    if(MyMediaPlayer.currentIndex== songsList.size()-1)
-                        return;
-                    MyMediaPlayer.currentIndex +=1;
-                    mediaPlayer.reset();
-                    isPlaying = true;
-                    Log.e( "Playing",isPlaying + "" );
-                    startAnimationRotate();
-                    setResourcesWithMusic();
-                    showNotification(R.drawable.ic_baseline_pause_24);
+                        }else {
+                            if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
+                                return;
+                            MyMediaPlayer.currentIndex +=1;
+                            mediaPlayer.reset();
+                            startAnimationRotate();
+                            setResourcesWithMusicFolder();
+                            showNotificationFolder(R.drawable.ic_baseline_pause_24);
+                        }
+                    case "Home":
+                        if (mediaPlayer.isLooping()){
+
+                        }else {
+                            if(MyMediaPlayer.currentIndex== songListHome.size()-1)
+                                return;
+                            MyMediaPlayer.currentIndex +=1;
+                            mediaPlayer.reset();
+                            startAnimationRotate();
+                            setResourcesWithMusicHome();
+                            showNotificationHome(R.drawable.ic_baseline_pause_24);
+                        }
                 }
             }
         });
-        Intent intent = new Intent(this, MusicService.class);
-        bindService(intent,this,BIND_AUTO_CREATE);
     }
-    void setResourcesWithMusic(){
-        currentSong = songsList.get(MyMediaPlayer.currentIndex);
-
-        titleTv.setText(currentSong.getTitle());
-
-        totalTimeTv.setText(convertToMMSS(currentSong.getDuration()));
-
-        pausePlay.setOnClickListener(v-> pausePlay());
-        nextBtn.setOnClickListener(v-> playNextSong());
-        previousBtn.setOnClickListener(v-> playPreviousSong());
+    void setResourcesWithMusicFolder(){
+        currentSongFolder = songsListFolder.get(MyMediaPlayer.currentIndex);
+        titleTv.setText(currentSongFolder.getTitle());
+        totalTimeTv.setText(convertToMMSS(currentSongFolder.getDuration()));
+        pausePlay.setOnClickListener(v-> pausePlayFolder());
+        nextBtn.setOnClickListener(v-> playNextSongFolder());
+        previousBtn.setOnClickListener(v-> playPreviousSongFolder());
         repeatBtn.setOnClickListener(v->repeatMode());
         backBtn.setOnClickListener(v->backToHome());
         backToPlaylist.setOnClickListener(v->backToHome());
-        playMusic();
+        playMusicFolder();
     }
-
+    void setResourcesWithMusicHome(){
+        currentSongHome = songListHome.get(MyMediaPlayer.currentIndex);
+        titleTv.setText(currentSongHome.getSongTitle());
+        Glide.with(getApplicationContext()).load(currentSongHome.getSongImage()).into(circleImageView);
+        pausePlay.setOnClickListener(v-> pausePlayHome());
+        nextBtn.setOnClickListener(v-> playNextSongHome());
+        previousBtn.setOnClickListener(v-> playPreviousSongHome());
+        repeatBtn.setOnClickListener(v->repeatMode());
+        backBtn.setOnClickListener(v->backToHome());
+        backToPlaylist.setOnClickListener(v->backToHome());
+        playMusicHome();
+    }
+    public  static String Convert(int duration){
+        Long milis = Long.parseLong(String.valueOf(duration));
+        return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(milis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(milis) % TimeUnit.MINUTES.toSeconds(1) );
+    }
+    public static String convertToMMSS(String duration){
+        Long millis = Long.parseLong(duration);
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+    }
     private void backToHome() {
-        finish();
+        onBackPressed();
     }
 
     private void repeatMode() {
@@ -169,10 +243,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             y = 0;
         }
     }
-    private void playMusic(){
+    private void playMusicFolder(){
         mediaPlayer.reset();
         try {
-            mediaPlayer.setDataSource(currentSong.getPath());
+            mediaPlayer.setDataSource(currentSongFolder.getPath());
             mediaPlayer.prepare();
             mediaPlayer.start();
             seekBar.setProgress(0);
@@ -181,14 +255,20 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             e.printStackTrace();
         }
     }
-
-
-    public static String convertToMMSS(String duration){
-        Long millis = Long.parseLong(duration);
-        return String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+    private void playMusicHome(){
+        mediaPlayer.reset();
+        try {
+            mediaPlayer.setDataSource(currentSongHome.getSongUri());
+            mediaPlayer.prepare();
+            totalTimeTv.setText(Convert(mediaPlayer.getDuration()));
+            mediaPlayer.start();
+            seekBar.setProgress(0);
+            seekBar.setMax(mediaPlayer.getDuration());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     private void startAnimationRotate() {
         circleImageView.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.infinite_rotate);
@@ -196,63 +276,99 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
     }
 
     @Override
-    public void playNextSong() {
-        if(MyMediaPlayer.currentIndex== songsList.size()-1)
+    public void playNextSongFolder() {
+        if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
             return;
         MyMediaPlayer.currentIndex +=1;
         mediaPlayer.reset();
-        isPlaying = true;
-        Log.e( "Playing",isPlaying + "" );
         startAnimationRotate();
-        setResourcesWithMusic();
-        showNotification(R.drawable.ic_baseline_pause_24);
+        setResourcesWithMusicFolder();
+        showNotificationFolder(R.drawable.ic_baseline_pause_24);
     }
 
     @Override
-    public void playPreviousSong() {
+    public void playPreviousSongFolder() {
         if(MyMediaPlayer.currentIndex== 0)
             return;
         MyMediaPlayer.currentIndex -=1;
         mediaPlayer.reset();
-        isPlaying = true;
-        Log.e( "Playing",isPlaying + "" );
         startAnimationRotate();
-        setResourcesWithMusic();
-        showNotification(R.drawable.ic_baseline_pause_24);
+        setResourcesWithMusicFolder();
+        showNotificationFolder(R.drawable.ic_baseline_pause_24);
+
     }
 
     @Override
-    public void pausePlay() {
+    public void pausePlayFolder() {
         if(mediaPlayer.isPlaying()){
             mediaPlayer.pause();
             circleImageView.clearAnimation();
-            isPlaying = false;
-            Log.e( "Playing",isPlaying + "" );
-            showNotification(R.drawable.ic_baseline_play_arrow_24);
+            showNotificationFolder(R.drawable.ic_baseline_play_arrow_24);
         }
         else{
             mediaPlayer.start();
             startAnimationRotate();
-            isPlaying = true;
-            Log.e( "Playing",isPlaying + "" );
-            showNotification(R.drawable.ic_baseline_pause_24);
-
+            showNotificationFolder(R.drawable.ic_baseline_pause_24);
         }
     }
 
     @Override
+    public void playNextSongHome() {
+        if(MyMediaPlayer.currentIndex== songListHome.size()-1)
+            return;
+        MyMediaPlayer.currentIndex +=1;
+        mediaPlayer.reset();
+        startAnimationRotate();
+        setResourcesWithMusicHome();
+        showNotificationHome(R.drawable.ic_baseline_pause_24);
+    }
+
+    @Override
+    public void playPreviousSongHome() {
+        if(MyMediaPlayer.currentIndex== 0)
+            return;
+        MyMediaPlayer.currentIndex -=1;
+        mediaPlayer.reset();
+        startAnimationRotate();
+        setResourcesWithMusicHome();
+        showNotificationHome(R.drawable.ic_baseline_pause_24);
+    }
+
+    @Override
+    public void pausePlayHome() {
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            circleImageView.clearAnimation();
+            showNotificationHome(R.drawable.ic_baseline_play_arrow_24);
+        }
+        else{
+            mediaPlayer.start();
+            startAnimationRotate();
+            showNotificationHome(R.drawable.ic_baseline_pause_24);
+        }
+    }
+
+
+    @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        MusicService.MyBinder binder =(MusicService.MyBinder) iBinder;
-        musicService = binder.getService();
-        musicService.sendCallBack(MusicPlayerActivity.this);
-        Log.e("Connected",musicService + "" );
+        if (z == 1){
+            MusicServiceFolder.MyBinder binder =(MusicServiceFolder.MyBinder) iBinder;
+            musicServiceFolder = binder.getService();
+            musicServiceFolder.sendCallBack(MusicPlayerActivity.this);
+        }else if (z == 2){
+            MusicServiceHome.MyBinderHome binder =(MusicServiceHome.MyBinderHome) iBinder;
+            musicServiceHome = binder.getService();
+            musicServiceHome.sendCallBack(MusicPlayerActivity.this);
+        }
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        musicService = null;
-        Log.e("Disconected",musicService + "" );
-
+        if (z == 1){
+            musicServiceFolder = null;
+        }else if (z == 2){
+            musicServiceHome = null;
+        }
     }
 
     @Override
@@ -264,22 +380,60 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = new Intent(this, MusicService.class);
-        bindService(intent,this,BIND_AUTO_CREATE);
+        if (z == 1){
+            Intent intent = new Intent(this, MusicServiceFolder.class);
+            bindService(intent,this,BIND_AUTO_CREATE);
+        }else if (z == 2){
+            Intent intent = new Intent(this, MusicServiceHome.class);
+            bindService(intent,this,BIND_AUTO_CREATE);
+        }
+
     }
 
-    public void showNotification(int pausePlay){
+    public void showNotificationFolder(int pausePlay){
         Intent intent = new Intent(this, MusicPlayerActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent, PendingIntent.FLAG_MUTABLE);
-        Intent prevIntent = new Intent(this, NotificationReciver.class)
+        Intent prevIntent = new Intent(this, NotificationReciverFolder.class)
                 .setAction(ACTION_PREV);
         PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent,
                 PendingIntent.FLAG_MUTABLE);
-        Intent playIntent = new Intent(this, NotificationReciver.class)
+        Intent playIntent = new Intent(this, NotificationReciverFolder.class)
                 .setAction(ACTION_PLAY);
         PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent,
                 PendingIntent.FLAG_MUTABLE);
-        Intent nextIntent = new Intent(this, NotificationReciver.class)
+        Intent nextIntent = new Intent(this, NotificationReciverFolder.class)
+                .setAction(ACTION_NEXT);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_1)
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(bitmap)
+                .setContentTitle(currentSongFolder.getTitle())
+                .setContentText(currentSongFolder.getTitle())
+                .addAction(R.drawable.ic_baseline_skip_previous_24,"Previous", prevPendingIntent)
+                .addAction(pausePlay,"Play", playPendingIntent)
+                .addAction(R.drawable.ic_baseline_skip_next_24,"Next", nextPendingIntent)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(pendingIntent)
+                .setOnlyAlertOnce(true)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
+    }
+    public void showNotificationHome(int pausePlay){
+        Intent intent = new Intent(this, MusicPlayerActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent, PendingIntent.FLAG_MUTABLE);
+        Intent prevIntent = new Intent(this, NotificationReciverHome.class)
+                .setAction(ACTION_PREV);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Intent playIntent = new Intent(this, NotificationReciverHome.class)
+                .setAction(ACTION_PLAY);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Intent nextIntent = new Intent(this, NotificationReciverHome.class)
                 .setAction(ACTION_NEXT);
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent,
                 PendingIntent.FLAG_MUTABLE);
@@ -287,8 +441,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(R.drawable.logo)
                 .setLargeIcon(bitmap)
-                .setContentTitle(currentSong.getTitle())
-                .setContentText(currentSong.getTitle())
+                .setContentTitle(currentSongHome.getSongTitle())
+                .setContentText(currentSongHome.getSongTitle())
                 .addAction(R.drawable.ic_baseline_skip_previous_24,"Previous", prevPendingIntent)
                 .addAction(pausePlay,"Play", playPendingIntent)
                 .addAction(R.drawable.ic_baseline_skip_next_24,"Next", nextPendingIntent)

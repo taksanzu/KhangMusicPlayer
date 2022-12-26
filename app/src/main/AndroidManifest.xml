@@ -11,6 +11,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/logo"
         android:name=".MusicplayerActivity.ApplicationClass"
+        android:launchMode="singleTask"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
@@ -26,9 +27,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".MusicplayerActivity.MusicPlayerActivity"/>
-
-        <service android:name=".MusicplayerActivity.MusicService" android:enabled="true" />
-        <receiver android:name=".MusicplayerActivity.NotificationReciver" android:enabled="true"
+        <service android:name=".HomeActivity.MusicServiceHome" android:enabled="true" />
+        <receiver android:name=".HomeActivity.NotificationReciverHome" android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NEXT"/>
+                <action android:name="PREVIOUS"/>
+                <action android:name="PLAY"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".FolderActivity.MusicServiceFolder" android:enabled="true" />
+        <receiver android:name=".FolderActivity.NotificationReciverFolder" android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="NEXT"/>

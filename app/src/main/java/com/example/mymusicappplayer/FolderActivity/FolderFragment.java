@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class FolderFragment extends Fragment {
     RecyclerView recyclerView;
-    ArrayList<MusicModel> songsList = new ArrayList<>();
+    ArrayList<MusicModelFolder> songsList = new ArrayList<>();
     public FolderFragment() {
     }
 
@@ -61,7 +61,7 @@ public class FolderFragment extends Fragment {
 
         Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,projection,selection,null,null);
         while(cursor.moveToNext()){
-            MusicModel songData = new MusicModel(cursor.getString(1),cursor.getString(0),cursor.getString(2));
+            MusicModelFolder songData = new MusicModelFolder(cursor.getString(1),cursor.getString(0),cursor.getString(2));
             if(new File(songData.getPath()).exists())
                 songsList.add(songData);
         }
@@ -71,7 +71,7 @@ public class FolderFragment extends Fragment {
         }else{
             //recyclerview
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-            recyclerView.setAdapter(new MusicAdapter(songsList,getActivity().getApplicationContext()));
+            recyclerView.setAdapter(new MusicAdapterFolder(songsList,getActivity().getApplicationContext()));
         }
     }
 

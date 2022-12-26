@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.mymusicappplayer.AlbumFragment;
 import com.example.mymusicappplayer.FolderActivity.FolderFragment;
-import com.example.mymusicappplayer.HomeFragment;
+import com.example.mymusicappplayer.HomeActivity.HomeFragment;
 import com.example.mymusicappplayer.SettingFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {

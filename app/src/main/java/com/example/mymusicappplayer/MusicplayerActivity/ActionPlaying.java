@@ -1,7 +1,10 @@
 package com.example.mymusicappplayer.MusicplayerActivity;
 
 public interface ActionPlaying {
-    void playNextSong();
-    void playPreviousSong();
-    void pausePlay();
+    void playNextSongFolder();
+    void playPreviousSongFolder();
+    void pausePlayFolder();
+    void playNextSongHome();
+    void playPreviousSongHome();
+    void pausePlayHome();
 }

@@ -7,13 +7,14 @@
     android:layout_marginRight="5dp"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:background="#DAD8D8">
+    android:background="@drawable/background_border">
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:id="@+id/icon_view"
         android:layout_centerVertical="true"
-        android:src="@drawable/logo"/>
+        android:src="@drawable/logo"
+        android:layout_marginLeft="10dp"/>
     <LinearLayout
         android:id="@+id/ly_songsName"
         android:layout_width="match_parent"
@@ -26,7 +27,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:textStyle="bold"
-            android:text="Song name"/>
+            android:text="Song name"
+            android:textColor="#595656"/>
+        <TextView
+            android:id="@+id/SingerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="Unknown Singer"/>
     </LinearLayout>
 </RelativeLayout>

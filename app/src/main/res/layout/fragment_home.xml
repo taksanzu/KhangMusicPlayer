@@ -3,15 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".HomeActivity.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainPageActivity">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarHome"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/bgBottomNavigation"
+            app:menu="@menu/search_view"
+            android:autofillHints="Tìm ở đây"/>
         <TextView
             android:id="@+id/tv_MainTitle"
             android:layout_width="wrap_content"
@@ -19,20 +26,14 @@
             android:layout_centerHorizontal="true"
             android:text="Trang chủ"
             android:textStyle="bold"
-            android:textSize="40dp"/>
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_RandomMusicSuggest"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:paddingTop="10dp"
-            android:layout_margin="5dp"
-            android:layout_below="@+id/tv_MainTitle"/>
+            android:textSize="40dp"
+            android:layout_below="@+id/toolbarHome"/>
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_MusicList"
+            android:id="@+id/rv_MusicListHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/music_items"
-            android:layout_below="@+id/cv_RandomMusicSuggest"/>
+            android:layout_below="@+id/tv_MainTitle"/>
 
     </RelativeLayout>
 

@@ -1,63 +1,70 @@
-package com.example.mymusicappplayer.FolderActivity;
+package com.example.mymusicappplayer.HomeActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mymusicappplayer.MusicplayerActivity.MusicPlayerActivity;
 import com.example.mymusicappplayer.MusicplayerActivity.MyMediaPlayer;
 import com.example.mymusicappplayer.R;
 
 import java.util.ArrayList;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
-    ArrayList<MusicModel> songsList;
+public class MusicAdapterHome extends RecyclerView.Adapter<MusicAdapterHome.ViewHolder> {
+    ArrayList<MusicModelHome> songsList;
     Context context;
 
-    public MusicAdapter(ArrayList<MusicModel> songsList, Context context) {
+    public MusicAdapterHome(ArrayList<MusicModelHome> songsList, Context context) {
         this.songsList = songsList;
         this.context = context;
     }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.music_items,parent,false);
-        return new MusicAdapter.ViewHolder(view);
+        return new MusicAdapterHome.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        MusicModel songData = songsList.get(position);
-        holder.titleTextView.setText(songData.getTitle());
-
+        MusicModelHome musicModelHome = songsList.get(position);
+        Glide.with(context).load(songsList.get(position).getSongImage()).into(holder.imageSong);
+        holder.songTitle.setText(musicModelHome.getSongTitle());
+        holder.singer.setText(musicModelHome.getSongSinger());
         if(MyMediaPlayer.currentIndex==position){
-            holder.titleTextView.setTextColor(Color.parseColor("#FF0000"));
+            holder.songTitle.setTextColor(Color.parseColor("#FF0000"));
         }else{
-            holder.titleTextView.setTextColor(Color.parseColor("#000000"));
+            holder.songTitle.setTextColor(Color.parseColor("#000000"));
         }
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //navigate to another acitivty
+            public void onClick(View view) {
                 MyMediaPlayer.getInstance().reset();
                 MyMediaPlayer.currentIndex = position;
                 Intent intent = new Intent(context, MusicPlayerActivity.class);
-                intent.putExtra("LIST",songsList);
+                intent.putExtra("Class","Home");
+                intent.putExtra("LISTHOME",songsList);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -65,13 +72,21 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         return songsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView titleTextView;
-        ImageView iconImageView;
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView singer, songTitle;
+        ImageView imageSong;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.SongName);
-            iconImageView = itemView.findViewById(R.id.icon_view);
+            songTitle = itemView.findViewById(R.id.SongName);
+            singer = itemView.findViewById(R.id.SingerName);
+            imageSong = itemView.findViewById(R.id.icon_view);
+
         }
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    public void filterSongs(ArrayList<MusicModelHome> filterList){
+        songsList = filterList;
+        notifyDataSetChanged();
     }
 }
