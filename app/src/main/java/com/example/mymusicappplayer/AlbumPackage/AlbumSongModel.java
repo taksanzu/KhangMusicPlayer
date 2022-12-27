@@ -1,9 +1,8 @@
-package com.example.mymusicappplayer.HomeActivity;
-
+package com.example.mymusicappplayer.AlbumPackage;
 
 import java.io.Serializable;
 
-public class MusicModelHome implements Serializable {
+public class AlbumSongModel implements Serializable {
     public String mKey;
     public String songImage;
     public String songPath;
@@ -11,7 +10,7 @@ public class MusicModelHome implements Serializable {
     public String songSinger;
     public String songUri;
 
-    public MusicModelHome(String songImage, String songPath, String songTitle, String songSinger,String songUri) {
+    public AlbumSongModel(String songImage, String songPath, String songTitle, String songSinger, String songUri) {
         this.songImage = songImage;
         this.songPath = songPath;
         this.songTitle = songTitle;
@@ -19,7 +18,7 @@ public class MusicModelHome implements Serializable {
         this.songUri = songUri;
     }
 
-    public MusicModelHome() {
+    public AlbumSongModel() {
     }
 
     public String getmKey() {

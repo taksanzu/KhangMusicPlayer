@@ -5,46 +5,80 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
+        android:name=".MusicplayerActivity.ApplicationClass"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/logo"
-        android:name=".MusicplayerActivity.ApplicationClass"
-        android:launchMode="singleTask"
         android:label="@string/app_name"
+        android:launchMode="singleTask"
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicAppPlayer"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity.MainActivity"
+            android:name=".SomeStuff.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MusicplayerActivity.MusicPlayerActivity"/>
-        <service android:name=".HomeActivity.MusicServiceHome" android:enabled="true" />
-        <receiver android:name=".HomeActivity.NotificationReciverHome" android:enabled="true"
+        <activity
+            android:name=".AlbumPackage.AlbumActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MainPackage.MainActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".MusicplayerActivity.MusicPlayerActivity" />
+        <service
+            android:name=".HomePackage.MusicServiceHome"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".HomePackage.NotificationReciverHome"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="NEXT"/>
-                <action android:name="PREVIOUS"/>
-                <action android:name="PLAY"/>
+                <action android:name="NEXT" />
+                <action android:name="PREVIOUS" />
+                <action android:name="PLAY" />
             </intent-filter>
         </receiver>
-        <service android:name=".FolderActivity.MusicServiceFolder" android:enabled="true" />
-        <receiver android:name=".FolderActivity.NotificationReciverFolder" android:enabled="true"
+        <service
+            android:name=".FolderPackage.MusicServiceFolder"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".FolderPackage.NotificationReciverFolder"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="NEXT"/>
-                <action android:name="PREVIOUS"/>
-                <action android:name="PLAY"/>
+                <action android:name="NEXT" />
+                <action android:name="PREVIOUS" />
+                <action android:name="PLAY" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".AlbumPackage.AlbumService"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".AlbumPackage.NotificationReciverAlbum"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="NEXT" />
+                <action android:name="PREVIOUS" />
+                <action android:name="PLAY" />
             </intent-filter>
         </receiver>
     </application>
-    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+
 </manifest>

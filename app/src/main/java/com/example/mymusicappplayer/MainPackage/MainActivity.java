@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer.MainActivity;
+package com.example.mymusicappplayer.MainPackage;
 
 
 import androidx.annotation.NonNull;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
         viewPager = findViewById(R.id.vp_Music);
         loadFragment();
 

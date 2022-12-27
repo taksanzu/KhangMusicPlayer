@@ -1,0 +1,30 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".AlbumPackage.AlbumActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarAlbumSong"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bgBottomNavigation"
+        android:autofillHints="Tìm ở đây"
+        app:title="@string/title_Album"/>
+    <TextView
+        android:id="@+id/tv_AlbumSongTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Album songs"
+        android:textStyle="bold"
+        android:textSize="40dp"
+        android:layout_below="@+id/toolbarAlbumSong"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_MusicListAlbumSong"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/music_items"
+        android:layout_below="@+id/tv_AlbumSongTitle"/>
+
+</RelativeLayout>

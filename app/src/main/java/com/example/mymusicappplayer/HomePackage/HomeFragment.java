@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer.HomeActivity;
+package com.example.mymusicappplayer.HomePackage;
 
 
 
@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,13 +29,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
-import java.util.Objects;
 
 
 public class HomeFragment extends Fragment {
@@ -46,7 +41,6 @@ public class HomeFragment extends Fragment {
     MusicAdapterHome musicAdapterHome;
     FirebaseStorage storage;
     Toolbar toolbar;
-    MenuItem menuItem;
     public HomeFragment() {
     }
 
@@ -93,6 +87,7 @@ public class HomeFragment extends Fragment {
                     musicModelHome.setSongUri(uri.toString());
                     songsList.add(musicModelHome);
                 }
+                Collections.shuffle(songsList);
                 musicAdapterHome = new MusicAdapterHome(songsList,getActivity().getApplicationContext());
                 recyclerView.setAdapter(musicAdapterHome);
                 musicAdapterHome.notifyDataSetChanged();

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingFragment">
+    tools:context=".SomeStuff.SettingFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -30,12 +30,20 @@
             android:layout_margin="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"/>
-        <Button
-            android:id="@+id/btnLanguage"
-            android:layout_width="200dp"
+        <RadioButton
+            android:id="@+id/btnLight"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/language"
-            android:text="Đổi ngôn ngữ"/>
+            android:text="Sáng lên nào"
+            android:textSize="20dp"/>
+        <RadioButton
+            android:id="@+id/btnDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnLight"
+            android:text="Tối xuống đi"
+            android:textSize="20dp"/>
     </RelativeLayout>
 
 </FrameLayout>

@@ -7,4 +7,7 @@ public interface ActionPlaying {
     void playNextSongHome();
     void playPreviousSongHome();
     void pausePlayHome();
+    void playNextSongAlbum();
+    void playPreviousSongAlbum();
+    void pausePlayAlbum();
 }

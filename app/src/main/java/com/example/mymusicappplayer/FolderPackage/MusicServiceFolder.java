@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer.FolderActivity;
+package com.example.mymusicappplayer.FolderPackage;
 
 import android.app.Service;
 import android.content.Intent;

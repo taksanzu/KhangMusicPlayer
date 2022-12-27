@@ -3,13 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FolderActivity.FolderFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".FolderPackage.FolderFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarFolder"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/bgBottomNavigation"
+            app:menu="@menu/search_view"
+            android:autofillHints="Tìm ở đây"/>
         <TextView
+            android:layout_below="@id/toolbarFolder"
             android:id="@+id/tv_FolderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

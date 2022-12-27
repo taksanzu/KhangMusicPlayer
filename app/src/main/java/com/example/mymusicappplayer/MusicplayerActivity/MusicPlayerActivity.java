@@ -5,6 +5,7 @@ import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_PREV;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_1;
 import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_2;
+import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_3;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -30,13 +31,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicappplayer.FolderActivity.MusicModelFolder;
-import com.example.mymusicappplayer.FolderActivity.MusicServiceFolder;
-import com.example.mymusicappplayer.FolderActivity.NotificationReciverFolder;
-import com.example.mymusicappplayer.HomeActivity.MusicModelHome;
-import com.example.mymusicappplayer.HomeActivity.MusicServiceHome;
-import com.example.mymusicappplayer.HomeActivity.NotificationReciverHome;
+import com.example.mymusicappplayer.AlbumPackage.AlbumModel;
+import com.example.mymusicappplayer.AlbumPackage.AlbumService;
+import com.example.mymusicappplayer.AlbumPackage.AlbumSongModel;
+import com.example.mymusicappplayer.AlbumPackage.NotificationReciverAlbum;
+import com.example.mymusicappplayer.FolderPackage.MusicModelFolder;
+import com.example.mymusicappplayer.FolderPackage.MusicServiceFolder;
+import com.example.mymusicappplayer.FolderPackage.NotificationReciverFolder;
+import com.example.mymusicappplayer.HomePackage.MusicModelHome;
+import com.example.mymusicappplayer.HomePackage.MusicServiceHome;
+import com.example.mymusicappplayer.HomePackage.NotificationReciverHome;
 import com.example.mymusicappplayer.R;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,18 +57,22 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
     CircleImageView circleImageView;
     ArrayList<MusicModelFolder> songsListFolder;
     MusicModelFolder currentSongFolder;
+    MusicServiceFolder musicServiceFolder;
     ArrayList<MusicModelHome> songListHome;
     MusicModelHome currentSongHome;
+    MusicServiceHome musicServiceHome;
+    ArrayList<AlbumSongModel> songListAlbum;
+    AlbumSongModel currentSongAlbum;
+    AlbumService albumService;
+    MediaSessionCompat mediaSession;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
     int x = 0, y = 0;//y = 0: repeatDisable, y = 1: repeat
-    MusicServiceFolder musicServiceFolder;
-    MusicServiceHome musicServiceHome;
-    MediaSessionCompat mediaSession;
-    int z = 0;
+    int z = 0;// 1:Folder, 2:Home, 3:Album
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
         titleTv = findViewById(R.id.song_title);
         currentTimeTv = findViewById(R.id.current_time);
         totalTimeTv = findViewById(R.id.total_time);
@@ -113,6 +123,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
                 break;
             case "Home":
                 z = 2;
+                notificationManager.cancel(0);
                 songListHome = (ArrayList<MusicModelHome>) getIntent().getSerializableExtra("LISTHOME");
                 setResourcesWithMusicHome();
                 if (mediaPlayer.isPlaying()){
@@ -141,57 +152,99 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
                 Intent intent1 = new Intent(this, MusicServiceHome.class);
                 bindService(intent1,this,BIND_AUTO_CREATE);
                 break;
+            case "Album":
+                z = 3;
+                notificationManager.cancel(0);
+                songListAlbum = (ArrayList<AlbumSongModel>) getIntent().getSerializableExtra("ALBUM");
+                setResourcesWithMusicAlbum();
+                if (mediaPlayer.isPlaying()){
+                    startAnimationRotate();
+                    showNotificationAlbum(R.drawable.ic_baseline_pause_24);
+                } else {
+                    circleImageView.clearAnimation();
+                    showNotificationAlbum(R.drawable.ic_baseline_play_arrow_24);
+                }
+                MusicPlayerActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mediaPlayer!=null){
+                            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                            currentTimeTv.setText(convertToMMSS(mediaPlayer.getCurrentPosition()+""));
+                            if(mediaPlayer.isPlaying()){
+                                pausePlay.setImageResource(R.drawable.ic_baseline_pause_24);
+                            }else{
+                                pausePlay.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                            }
+
+                        }
+                        new Handler().postDelayed(this,100);
+                    }
+                });
+                Intent intent2 = new Intent(this, AlbumService.class);
+                bindService(intent2,this,BIND_AUTO_CREATE);
+                break;
 
         }
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mediaPlayer!=null && fromUser){
-                    mediaPlayer.seekTo(progress);
-                }
-            }
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+//                switch (text){
+//                    case "Folder":
+//                        if (mediaPlayer.isLooping()){
+//
+//                        }else {
+//                            if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
+//                                return;
+//                            MyMediaPlayer.currentIndex +=1;
+//                            mediaPlayer.reset();
+//                            startAnimationRotate();
+//                            setResourcesWithMusicFolder();
+//                            showNotificationFolder(R.drawable.ic_baseline_pause_24);
+//                        }
+//                        break;
+//                    case "Home":
+//                        if (mediaPlayer.isLooping()){
+//
+//                        }else {
+//                            if(MyMediaPlayer.currentIndex== songListHome.size()-1)
+//                                return;
+//                            MyMediaPlayer.currentIndex +=1;
+//                            mediaPlayer.reset();
+//                            startAnimationRotate();
+//                            setResourcesWithMusicHome();
+//                            showNotificationHome(R.drawable.ic_baseline_pause_24);
+//                        }
+//                        break;
+//                    case "Album":
+//                        if (mediaPlayer.isLooping()){
+//
+//                        }else {
+//                            if(MyMediaPlayer.currentIndex== songListAlbum.size()-1)
+//                                return;
+//                            MyMediaPlayer.currentIndex +=1;
+//                            mediaPlayer.reset();
+//                            startAnimationRotate();
+//                            setResourcesWithMusicAlbum();
+//                            //showNotificationHome(R.drawable.ic_baseline_pause_24);
+//                        }
+//                        break;
+//                }
+//            }
+//        });
+    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                switch (text){
-                    case "Folder":
-                        if (mediaPlayer.isLooping()){
-
-                        }else {
-                            if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
-                                return;
-                            MyMediaPlayer.currentIndex +=1;
-                            mediaPlayer.reset();
-                            startAnimationRotate();
-                            setResourcesWithMusicFolder();
-                            showNotificationFolder(R.drawable.ic_baseline_pause_24);
-                        }
-                    case "Home":
-                        if (mediaPlayer.isLooping()){
-
-                        }else {
-                            if(MyMediaPlayer.currentIndex== songListHome.size()-1)
-                                return;
-                            MyMediaPlayer.currentIndex +=1;
-                            mediaPlayer.reset();
-                            startAnimationRotate();
-                            setResourcesWithMusicHome();
-                            showNotificationHome(R.drawable.ic_baseline_pause_24);
-                        }
-                }
-            }
-        });
+    private void setResourcesWithMusicAlbum() {
+        currentSongAlbum = songListAlbum.get(MyMediaPlayer.currentIndex);
+        titleTv.setText(currentSongAlbum.getSongTitle());
+        Glide.with(getApplicationContext()).load(currentSongAlbum.getSongImage()).into(circleImageView);
+        pausePlay.setOnClickListener(v-> pausePlayAlbum());
+        nextBtn.setOnClickListener(v-> playNextSongAlbum());
+        previousBtn.setOnClickListener(v-> playPreviousSongAlbum());
+        repeatBtn.setOnClickListener(v->repeatMode());
+        backBtn.setOnClickListener(v->backToHome());
+        backToPlaylist.setOnClickListener(v->backToHome());
+        playMusicAlbum();
     }
     void setResourcesWithMusicFolder(){
         currentSongFolder = songsListFolder.get(MyMediaPlayer.currentIndex);
@@ -231,7 +284,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
     private void backToHome() {
         onBackPressed();
     }
-
     private void repeatMode() {
         if (y == 0){
             repeatBtn.setImageResource(R.drawable.repeat);
@@ -268,13 +320,24 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             e.printStackTrace();
         }
     }
-
+    private void playMusicAlbum() {
+        mediaPlayer.reset();
+        try {
+            mediaPlayer.setDataSource(currentSongAlbum.getSongUri());
+            mediaPlayer.prepare();
+            totalTimeTv.setText(Convert(mediaPlayer.getDuration()));
+            mediaPlayer.start();
+            seekBar.setProgress(0);
+            seekBar.setMax(mediaPlayer.getDuration());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void startAnimationRotate() {
         circleImageView.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.infinite_rotate);
         circleImageView.startAnimation(animation);
     }
-
     @Override
     public void playNextSongFolder() {
         if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
@@ -285,7 +348,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         setResourcesWithMusicFolder();
         showNotificationFolder(R.drawable.ic_baseline_pause_24);
     }
-
     @Override
     public void playPreviousSongFolder() {
         if(MyMediaPlayer.currentIndex== 0)
@@ -297,7 +359,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         showNotificationFolder(R.drawable.ic_baseline_pause_24);
 
     }
-
     @Override
     public void pausePlayFolder() {
         if(mediaPlayer.isPlaying()){
@@ -311,7 +372,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             showNotificationFolder(R.drawable.ic_baseline_pause_24);
         }
     }
-
     @Override
     public void playNextSongHome() {
         if(MyMediaPlayer.currentIndex== songListHome.size()-1)
@@ -322,7 +382,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         setResourcesWithMusicHome();
         showNotificationHome(R.drawable.ic_baseline_pause_24);
     }
-
     @Override
     public void playPreviousSongHome() {
         if(MyMediaPlayer.currentIndex== 0)
@@ -333,7 +392,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         setResourcesWithMusicHome();
         showNotificationHome(R.drawable.ic_baseline_pause_24);
     }
-
     @Override
     public void pausePlayHome() {
         if(mediaPlayer.isPlaying()){
@@ -347,8 +405,39 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             showNotificationHome(R.drawable.ic_baseline_pause_24);
         }
     }
+    @Override
+    public void playNextSongAlbum() {if(MyMediaPlayer.currentIndex== songListAlbum.size()-1)
+        return;
+        MyMediaPlayer.currentIndex +=1;
+        mediaPlayer.reset();
+        startAnimationRotate();
+        setResourcesWithMusicAlbum();
+        showNotificationAlbum(R.drawable.ic_baseline_pause_24);
 
-
+    }
+    @Override
+    public void playPreviousSongAlbum() {
+        if(MyMediaPlayer.currentIndex== 0)
+            return;
+        MyMediaPlayer.currentIndex -=1;
+        mediaPlayer.reset();
+        startAnimationRotate();
+        setResourcesWithMusicAlbum();
+        showNotificationAlbum(R.drawable.ic_baseline_pause_24);
+    }
+    @Override
+    public void pausePlayAlbum() {
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            circleImageView.clearAnimation();
+            showNotificationAlbum(R.drawable.ic_baseline_play_arrow_24);
+        }
+        else{
+            mediaPlayer.start();
+            startAnimationRotate();
+            showNotificationAlbum(R.drawable.ic_baseline_pause_24);
+        }
+    }
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         if (z == 1){
@@ -359,6 +448,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             MusicServiceHome.MyBinderHome binder =(MusicServiceHome.MyBinderHome) iBinder;
             musicServiceHome = binder.getService();
             musicServiceHome.sendCallBack(MusicPlayerActivity.this);
+        }else if (z == 3){
+            AlbumService.MyBinderAlbum binderAlbum = (AlbumService.MyBinderAlbum) iBinder;
+            albumService = binderAlbum.getService();
+            albumService.sendCallBack(MusicPlayerActivity.this);
         }
     }
 
@@ -368,6 +461,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
             musicServiceFolder = null;
         }else if (z == 2){
             musicServiceHome = null;
+        }else if (z == 3){
+            albumService = null;
         }
     }
 
@@ -386,10 +481,49 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         }else if (z == 2){
             Intent intent = new Intent(this, MusicServiceHome.class);
             bindService(intent,this,BIND_AUTO_CREATE);
+        } else if (z == 3){
+            Intent intent = new Intent(this, AlbumService.class);
+            bindService(intent,this,BIND_AUTO_CREATE);
         }
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+    private void showNotificationAlbum(int pausePlay) {
+        Intent intent = new Intent(this, MusicPlayerActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent, PendingIntent.FLAG_MUTABLE);
+        Intent prevIntent = new Intent(this, NotificationReciverAlbum.class)
+                .setAction(ACTION_PREV);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Intent playIntent = new Intent(this, NotificationReciverAlbum.class)
+                .setAction(ACTION_PLAY);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Intent nextIntent = new Intent(this, NotificationReciverAlbum.class)
+                .setAction(ACTION_NEXT);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent,
+                PendingIntent.FLAG_MUTABLE);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_3)
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(bitmap)
+                .setContentTitle(currentSongAlbum.getSongTitle())
+                .setContentText(currentSongAlbum.getSongTitle())
+                .addAction(R.drawable.ic_baseline_skip_previous_24,"Previous", prevPendingIntent)
+                .addAction(pausePlay,"Play", playPendingIntent)
+                .addAction(R.drawable.ic_baseline_skip_next_24,"Next", nextPendingIntent)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(pendingIntent)
+                .setOnlyAlertOnce(true)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
+    }
     public void showNotificationFolder(int pausePlay){
         Intent intent = new Intent(this, MusicPlayerActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent, PendingIntent.FLAG_MUTABLE);

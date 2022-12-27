@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer.HomeActivity;
+package com.example.mymusicappplayer.HomePackage;
 
 import android.app.Service;
 import android.content.Intent;

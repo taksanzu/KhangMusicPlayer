@@ -1,16 +1,22 @@
-package com.example.mymusicappplayer.FolderActivity;
+package com.example.mymusicappplayer.FolderPackage;
 
 import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -24,6 +30,8 @@ import java.util.ArrayList;
 public class FolderFragment extends Fragment {
     RecyclerView recyclerView;
     ArrayList<MusicModelFolder> songsList = new ArrayList<>();
+    MusicAdapterFolder musicAdapterFolder;
+    Toolbar toolbar;
     public FolderFragment() {
     }
 
@@ -37,6 +45,7 @@ public class FolderFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
     }
@@ -44,7 +53,50 @@ public class FolderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_folder, container, false);
+        View view = inflater.inflate(R.layout.fragment_folder, container, false);
+        toolbar = view.findViewById(R.id.toolbarFolder);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setTitle("Thư mục");
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search_view,menu);
+        MenuItem menuItem = menu.findItem(R.id.actionSearch);
+        SearchView searchView = (SearchView)menuItem.getActionView();
+        searchSong(searchView);
+    }
+
+    private void searchSong(SearchView searchView) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterSongs(newText.toLowerCase());
+                return true;
+            }
+        });
+    }
+
+    private void filterSongs(String toLowerCase) {
+        ArrayList<MusicModelFolder> filterList = new ArrayList<>();
+        if (songsList.size() > 0){
+            for (MusicModelFolder musicModelFolder : songsList){
+                if (musicModelFolder.getTitle().toLowerCase().contains(toLowerCase)){
+                    filterList.add(musicModelFolder);
+                }
+            }
+            if ( musicAdapterFolder != null){
+                musicAdapterFolder.filterSongs(filterList);
+            }
+        }
     }
 
     @Override
@@ -70,8 +122,10 @@ public class FolderFragment extends Fragment {
            Toast.makeText(getActivity().getApplicationContext(),"Không có bài nào hiển thị", Toast.LENGTH_SHORT).show();
         }else{
             //recyclerview
+            musicAdapterFolder = new MusicAdapterFolder(songsList,getActivity().getApplicationContext());
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-            recyclerView.setAdapter(new MusicAdapterFolder(songsList,getActivity().getApplicationContext()));
+            recyclerView.setAdapter(musicAdapterFolder);
+            musicAdapterFolder.notifyDataSetChanged();
         }
     }
 
