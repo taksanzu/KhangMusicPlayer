@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name=".MusicplayerActivity.ApplicationClass"
+        android:name=".MusicPlayerPackage.ApplicationClass"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -35,7 +35,7 @@
             android:name=".MainPackage.MainActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".MusicplayerActivity.MusicPlayerActivity" />
+        <activity android:name=".MusicPlayerPackage.MusicPlayerActivity" />
         <service
             android:name=".HomePackage.MusicServiceHome"
             android:enabled="true" />

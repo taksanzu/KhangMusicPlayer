@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:textSize="25dp"
             android:layout_below="@+id/tv_SettingTitle"
-            android:text="Ngôn ngữ: "
+            android:text="Sáng tối: "
             android:layout_margin="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"/>

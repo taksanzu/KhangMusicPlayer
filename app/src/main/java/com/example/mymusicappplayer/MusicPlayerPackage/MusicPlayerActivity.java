@@ -1,11 +1,11 @@
-package com.example.mymusicappplayer.MusicplayerActivity;
+package com.example.mymusicappplayer.MusicPlayerPackage;
 
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_NEXT;
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_PLAY;
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.ACTION_PREV;
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_1;
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_2;
-import static com.example.mymusicappplayer.MusicplayerActivity.ApplicationClass.CHANNEL_ID_3;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.ACTION_NEXT;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.ACTION_PLAY;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.ACTION_PREV;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.CHANNEL_ID_1;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.CHANNEL_ID_2;
+import static com.example.mymusicappplayer.MusicPlayerPackage.ApplicationClass.CHANNEL_ID_3;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -31,7 +31,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicappplayer.AlbumPackage.AlbumModel;
 import com.example.mymusicappplayer.AlbumPackage.AlbumService;
 import com.example.mymusicappplayer.AlbumPackage.AlbumSongModel;
 import com.example.mymusicappplayer.AlbumPackage.NotificationReciverAlbum;
@@ -42,7 +41,6 @@ import com.example.mymusicappplayer.HomePackage.MusicModelHome;
 import com.example.mymusicappplayer.HomePackage.MusicServiceHome;
 import com.example.mymusicappplayer.HomePackage.NotificationReciverHome;
 import com.example.mymusicappplayer.R;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -185,6 +183,24 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
                 break;
 
         }
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mediaPlayer!=null && fromUser){
+                    mediaPlayer.seekTo(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 //        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 //            @Override
 //            public void onCompletion(MediaPlayer mediaPlayer) {

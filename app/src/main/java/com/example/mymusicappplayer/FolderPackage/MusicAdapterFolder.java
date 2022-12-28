@@ -13,8 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mymusicappplayer.MusicplayerActivity.MusicPlayerActivity;
-import com.example.mymusicappplayer.MusicplayerActivity.MyMediaPlayer;
+import com.example.mymusicappplayer.MusicPlayerPackage.MusicPlayerActivity;
+import com.example.mymusicappplayer.MusicPlayerPackage.MyMediaPlayer;
 import com.example.mymusicappplayer.R;
 
 import java.util.ArrayList;
@@ -39,13 +39,6 @@ public class MusicAdapterFolder extends RecyclerView.Adapter<MusicAdapterFolder.
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         MusicModelFolder songData = songsList.get(position);
         holder.titleTextView.setText(songData.getTitle());
-
-        if(MyMediaPlayer.currentIndex==position){
-            holder.titleTextView.setTextColor(Color.parseColor("#FF0000"));
-        }else{
-            holder.titleTextView.setTextColor(Color.parseColor("#000000"));
-        }
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

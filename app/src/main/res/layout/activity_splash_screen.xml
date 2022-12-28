@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SomeStuff.SplashScreen"
-    android:background="@drawable/img">
+    android:background="@drawable/splash">
     <ImageView
         android:id="@+id/splashImage"
         android:layout_width="300dp"
@@ -24,7 +24,7 @@
         android:layout_marginBottom="10dp"
         android:fontFamily="cursive"
         android:text="Wellcome to music world"
-        android:textSize="40dp"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/bgBottomNavigation"
+        android:textSize="40dp" />
 
 </RelativeLayout>

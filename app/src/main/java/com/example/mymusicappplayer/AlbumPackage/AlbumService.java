@@ -7,10 +7,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.example.mymusicappplayer.HomePackage.MusicServiceHome;
-import com.example.mymusicappplayer.MusicplayerActivity.ActionPlaying;
-
-import java.security.Provider;
+import com.example.mymusicappplayer.MusicPlayerPackage.ActionPlaying;
 
 public class AlbumService extends Service {
     private IBinder iBinder = new MyBinderAlbum();

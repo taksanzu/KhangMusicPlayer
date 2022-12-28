@@ -7,7 +7,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.example.mymusicappplayer.MusicplayerActivity.ActionPlaying;
+import com.example.mymusicappplayer.MusicPlayerPackage.ActionPlaying;
 
 
 public class MusicServiceHome extends Service {

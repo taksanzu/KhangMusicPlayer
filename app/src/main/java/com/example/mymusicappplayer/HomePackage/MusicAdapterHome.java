@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicappplayer.MusicplayerActivity.MusicPlayerActivity;
-import com.example.mymusicappplayer.MusicplayerActivity.MyMediaPlayer;
+import com.example.mymusicappplayer.MusicPlayerPackage.MusicPlayerActivity;
+import com.example.mymusicappplayer.MusicPlayerPackage.MyMediaPlayer;
 import com.example.mymusicappplayer.R;
 
 import java.util.ArrayList;
@@ -41,11 +41,6 @@ public class MusicAdapterHome extends RecyclerView.Adapter<MusicAdapterHome.View
         Glide.with(context).load(songsList.get(position).getSongImage()).into(holder.imageSong);
         holder.songTitle.setText(musicModelHome.getSongTitle());
         holder.singer.setText(musicModelHome.getSongSinger());
-        if(MyMediaPlayer.currentIndex==position){
-            holder.songTitle.setTextColor(Color.parseColor("#FF0000"));
-        }else{
-            holder.songTitle.setTextColor(Color.parseColor("#000000"));
-        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

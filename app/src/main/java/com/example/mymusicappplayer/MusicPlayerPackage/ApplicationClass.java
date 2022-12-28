@@ -1,4 +1,4 @@
-package com.example.mymusicappplayer.MusicplayerActivity;
+package com.example.mymusicappplayer.MusicPlayerPackage;
 
 import android.app.Application;
 import android.app.NotificationChannel;

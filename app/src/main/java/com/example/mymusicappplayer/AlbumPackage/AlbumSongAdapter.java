@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicappplayer.MusicplayerActivity.MusicPlayerActivity;
-import com.example.mymusicappplayer.MusicplayerActivity.MyMediaPlayer;
+import com.example.mymusicappplayer.MusicPlayerPackage.MusicPlayerActivity;
+import com.example.mymusicappplayer.MusicPlayerPackage.MyMediaPlayer;
 import com.example.mymusicappplayer.R;
 
 import java.util.ArrayList;
