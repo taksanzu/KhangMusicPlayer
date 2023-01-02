@@ -201,52 +201,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
 
             }
         });
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//                switch (text){
-//                    case "Folder":
-//                        if (mediaPlayer.isLooping()){
-//
-//                        }else {
-//                            if(MyMediaPlayer.currentIndex== songsListFolder.size()-1)
-//                                return;
-//                            MyMediaPlayer.currentIndex +=1;
-//                            mediaPlayer.reset();
-//                            startAnimationRotate();
-//                            setResourcesWithMusicFolder();
-//                            showNotificationFolder(R.drawable.ic_baseline_pause_24);
-//                        }
-//                        break;
-//                    case "Home":
-//                        if (mediaPlayer.isLooping()){
-//
-//                        }else {
-//                            if(MyMediaPlayer.currentIndex== songListHome.size()-1)
-//                                return;
-//                            MyMediaPlayer.currentIndex +=1;
-//                            mediaPlayer.reset();
-//                            startAnimationRotate();
-//                            setResourcesWithMusicHome();
-//                            showNotificationHome(R.drawable.ic_baseline_pause_24);
-//                        }
-//                        break;
-//                    case "Album":
-//                        if (mediaPlayer.isLooping()){
-//
-//                        }else {
-//                            if(MyMediaPlayer.currentIndex== songListAlbum.size()-1)
-//                                return;
-//                            MyMediaPlayer.currentIndex +=1;
-//                            mediaPlayer.reset();
-//                            startAnimationRotate();
-//                            setResourcesWithMusicAlbum();
-//                            //showNotificationHome(R.drawable.ic_baseline_pause_24);
-//                        }
-//                        break;
-//                }
-//            }
-//        });
     }
 
 
@@ -604,5 +558,4 @@ public class MusicPlayerActivity extends AppCompatActivity implements ActionPlay
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0, notification);
     }
-
 }

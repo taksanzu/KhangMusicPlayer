@@ -11,8 +11,6 @@ import android.os.Bundle;;
 import android.widget.Toast;
 
 import com.example.mymusicappplayer.R;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +24,6 @@ public class AlbumActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<AlbumSongModel> albumSongList = new ArrayList<>();
     DatabaseReference databaseReference;
-    DatabaseReference reference;
     AlbumSongAdapter albumSongAdapter;
     FirebaseStorage storage;
     String text;
